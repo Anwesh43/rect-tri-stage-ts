@@ -212,3 +212,24 @@ class RectTri {
         this.curr.startUpdating(cb)
     }
 }
+
+class Renderer {
+    rt : RectTri = new RectTri()
+    animator : Animator = new Animator()
+
+    render(context : CanvasRenderingContext2D) {
+        this.rt.draw(context)
+    }
+
+    handleTap(cb : Function) {
+        this.rt.startUpdating(() => {
+            this.animator.start(() => {
+                cb()
+                this.rt.update(() => {
+                    this.animator.stop()
+                    cb()
+                })
+            })
+        })
+    }
+}
