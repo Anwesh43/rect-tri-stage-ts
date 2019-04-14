@@ -32,6 +32,42 @@ class ScaleUtil {
     static updateValue(scale : number, dir : number, a : number, b : number) : number {
         return ScaleUtil.mirrorValue(scale, a, b) * dir * scGap
     }
+
+    static updateToD(s : number, d : number, sc : number) : number {
+        return s + (d - s) * sc
+    }
+}
+
+class DrawingUtil {
+
+    static drawTriangle(context : CanvasRenderingContext2D, sc : number, size : number) {
+        const sc1 : number = ScaleUtil.divideScale(sc, 0, parts)
+        const sc2 : number = ScaleUtil.divideScale(sc, 1, parts)
+        const sc3 : number = ScaleUtil.divideScale(sc, 2, parts)
+        context.beginPath()
+        context.moveTo(0, 0)
+        context.lineTo(size * sc1, 0)
+        context.lineTo(size, -size * sc2)
+        context.lineTo(ScaleUtil.updateToD(size, 0, sc3), ScaleUtil.updateToD(-size, 0, sc3))
+        context.stroke()
+    }
+
+    static drawRTNode(context : CanvasRenderingContext2D, i : number, scale : number) {
+        const sc1 : number = ScaleUtil.divideScale(scale, 0, 2)
+        const sc2 : number = ScaleUtil.divideScale(scale, 1, 2)
+        context.lineWidth = Math.min(w, h) / strokeFactor
+        context.lineCap = 'round'
+        context.strokeStyle = foreColor
+        const gap : number = h / (nodes + 1)
+        const size : number = gap / sizeFactor
+        context.save()
+        context.translate(w / 2, gap * (i + 1))
+        context.rotate(Math.PI / 2 * sc2)
+        for (var j = 0; j < lines; j++) {
+            DrawingUtil.drawTriangle(context, ScaleUtil.divideScale(scale, j, lines), size)
+        }
+        context.restore()
+    }
 }
 
 class RectTriStage {
