@@ -9,6 +9,7 @@ const strokeFactor : number = 90
 const sizeFactor : number = 2.9
 const foreColor : string = "#673AB7"
 const backColor : string = "#BDBDBD"
+const delay : number = 20
 
 class ScaleUtil {
 
@@ -47,8 +48,8 @@ class DrawingUtil {
         context.beginPath()
         context.moveTo(0, 0)
         context.lineTo(size * sc1, 0)
-        context.lineTo(size, -size * sc2)
-        context.lineTo(ScaleUtil.updateToD(size, 0, sc3), ScaleUtil.updateToD(-size, 0, sc3))
+        context.lineTo(size * sc1, -size * sc2)
+        context.lineTo(ScaleUtil.updateToD(size * sc1, 0, sc3), ScaleUtil.updateToD(-size * sc2, 0, sc3))
         context.stroke()
     }
 
@@ -64,7 +65,10 @@ class DrawingUtil {
         context.translate(w / 2, gap * (i + 1))
         context.rotate(Math.PI / 2 * sc2)
         for (var j = 0; j < lines; j++) {
-            DrawingUtil.drawTriangle(context, ScaleUtil.divideScale(scale, j, lines), size)
+            context.save()
+            context.rotate(Math.PI / 2 * j)
+            DrawingUtil.drawTriangle(context, ScaleUtil.divideScale(sc1, j, lines), size)
+            context.restore()
         }
         context.restore()
     }
@@ -137,7 +141,7 @@ class Animator {
     start(cb : Function) {
         if (!this.animated) {
             this.animated = true
-            this.interval = setInterval(cb, 50)
+            this.interval = setInterval(cb, delay)
         }
     }
 
@@ -205,7 +209,7 @@ class RectTri {
 
     update(cb : Function) {
         this.curr.update(() => {
-            this.curr.getNext(this.dir, () => {
+            this.curr = this.curr.getNext(this.dir, () => {
                 this.dir *= -1
             })
             cb()
