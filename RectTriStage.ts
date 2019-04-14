@@ -42,6 +42,9 @@ class ScaleUtil {
 class DrawingUtil {
 
     static drawTriangle(context : CanvasRenderingContext2D, sc : number, size : number) {
+        if (sc == 0) {
+            return
+        }
         const sc1 : number = ScaleUtil.divideScale(sc, 0, parts)
         const sc2 : number = ScaleUtil.divideScale(sc, 1, parts)
         const sc3 : number = ScaleUtil.divideScale(sc, 2, parts)
@@ -116,7 +119,7 @@ class State {
     prevScale : number = 0
 
     update(cb : Function) {
-        this.scale += ScaleUtil.updateValue(this.scale, this.dir, lines * parts, 1)
+        this.scale += ScaleUtil.updateValue(this.scale, this.dir, lines * parts, parts)
         if (Math.abs(this.scale - this.prevScale) > 1) {
             this.scale = this.prevScale + this.dir
             this.dir = 0
